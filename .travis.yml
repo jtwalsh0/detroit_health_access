@@ -3,6 +3,22 @@
 
 language: python
 python: 3.5
+notifications:
+  email: false
+
+services:
+  - postgresql
+addons:
+  postgresql: "9.4"
+before_script:
+  - psql -U postgres -c "create extension postgis"
+  - createdb detroit_health_map
+  - cp tests/config/database.yml{.travis,}
+  - python tests/initialize_db.py
+
+os:
+  - linux
+  - osx
 
 env:
   - TOXENV=py35
@@ -14,6 +30,7 @@ env:
 
 # command to install dependencies, e.g. pip install -r requirements.txt --use-mirrors
 install: pip install -U tox
+install: pip install -r requirements_dev.txt
 
 # command to run tests, e.g. python setup.py test
 script: tox -e ${TOXENV}
@@ -25,7 +42,7 @@ deploy:
   distributions: sdist bdist_wheel
   user: jtwalsh0
   password:
-    secure: PLEASE_REPLACE_ME
+    secure: "V00QoLjCoXhFNOXkGVT7SGMDa7O1n0JJdrnT/jh7SA/OyOVy4gwQisZAvBnHhHxceyR/xrwUfUQg4BaOa4L1ndo5rXYcBCwlk4WrZslgcZRLmmFqPl8g0weCnhrtdg42aGnn9WOwF0BOZ0ZWTVsNHrxn5+u6NTT4wWBeHdwzeMlPngM//MWe12rNDUFNmS/u95bNaYO/rj9Yt7sditowkksg33gSTHENILy3YbVJOqdRKmOzUC/u4E7dOaPbkuZlGrSlC4KQ3dY1rZe/9Cq48ZVYIEiDAeB2hM9P1dbuAass8zkBDj4uAGKjD/P7rku4GGNoUegkzQCE8oGpu0yo/j6GKvG7JIBHVYo+QRt6LdD1M+HQxHYSkfBY+m7IKd3sDp0iecgXmAQrw0wZ+zKJe4GN7KRj8fJR85LkjwjvhpB8+4oCblibaTAI6L8JRCkFt8Vrf9oO/WSHwdbLu60+n5rLCxW9plCH9VdEzx9dkaUNxHLlqhrO5RS8dEHA02eNA0hA0jMaVs5UwNCcpW0VMHMGhlSV2ysRCEivG0GsLigW2psMU5EddYZT51PYa2iaCYkLfQ6ODJVrwVc0nu0Cbj1kyDcxg7jU6n2H8/Jj/n1+MRzxWd7lD97nRbt9q4FOzH4qt87ESUN0Q6TeqYejVXkBC75UeGHCglz8ebhEFW0="
   on:
     tags: true
     repo: jtwalsh0/detroit_health
